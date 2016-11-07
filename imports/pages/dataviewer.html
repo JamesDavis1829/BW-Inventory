@@ -1,0 +1,179 @@
+<template name="dataviewer">
+  <style>
+    table, th, td {
+      text-align: center;
+    }
+  </style>
+  <nav>
+    <div class="nav-wrapper grey lighten-3">
+      <a href="#" class="brand-logo"><img src="images/breathewise_compressed.png" style="height: 22px; width:auto; padding-left:10px"></a>
+      <ul id="nav-mobile" class="right hide-on-med-and-down">
+        <li><a href="#" style="color:black;" id="inventoryCategory">All</a></li>
+        <li><a href="#" style="color:black;" id="inventoryCategory">Hardware</a></li>
+        <li><a href="#" style="color:black;" id="inventoryCategory">Mechanical</a></li>
+        <li><a href="#" style="color:black;" id="inventoryCategory">Electrical</a></li>
+        <li><a href="#" style="color:black;" id="inventoryCategory">Assemblies</a></li>
+      </ul>
+    </div>
+  </nav>
+  <br>
+  {{#unless isAll}}
+    <div class="grey lighten-3 z-depth-1">
+      <br>
+      <h5 style="text-align:center">Add to Inventory: {{getCategory}}</h5>
+      <div class="row">
+        <form class="col s12" id="submitToDatabase">
+          <div class="row">
+            <div class="input-field col s2">
+              <input id="part_number" type="text" class="validate">
+              <label for="part_number">Part Number-Revision</label>
+            </div>
+            <div class="input-field col s3">
+              <input id="description" type="text" class="validate">
+              <label for="desciption">Desciption</label>
+            </div>
+            <div class="input-field col s3">
+              <input id="vendor" type="text" class="validate">
+              <label for="vendor">Vendor-Vendor PartNumber</label>
+            </div>
+            <div class="input-field col s1">
+              <input id="price" type="text" class="validate">
+              <label for="price">Price</label>
+            </div>
+            <div class="input-field col s2">
+              <input id="minimum_quantity" type="text" class="validate">
+              <label for="minimum_quantity">Min Quantity</label>
+            </div>
+            <div class="input-field col s1">
+              <input id="on_hand" type="text" class="validate">
+              <label for="on_hand">On Hand</label>
+            </div>
+          </div>
+          <div style="text-align:center">
+            <button class="btn waves-effect waves-light grey" type="submit" name="action">Submit
+              <i class="material-icons right">send</i>
+            </button>
+          </div>
+        </form>
+      </div>
+      <br>
+    </div>
+    <br>
+  {{/unless}}
+  {{#unless isId}}
+    <div class="grey lighten-3 z-depth-1">
+      <br>
+      <h5 style="text-align:center">Modify Row:</h5>
+      {{#each (getDataById getId)}}
+        <form id="modifyRow">
+          <div class="row">
+            <div class="col s2">
+              <label class="active">Category</label>
+              <br>
+              <input type="radio" name="cat" value="Hardware" id="Hardware" />
+              <label for="Hardware">H</label>
+              <input type="radio" name="cat" value="Mechanical" id="Mechanical" />
+              <label for="Mechanical">M</label>
+              <input type="radio" name="cat" value="Electrical" id="Electrical" />
+              <label for="Electrical">E</label>
+              <input type="radio" name="cat" value="Assembly" id="Assembly" />
+              <label for="Assembly">A</label>
+            </div>
+            <div class="input-field col s2">
+              <input value="{{this.partNumber_revision}}" id="change_part_number" type="text" class="validate">
+              <label class="active" for="change_part_number">PartNumber - Revision</label>
+            </div>
+            <div class="input-field col s3">
+              <input value="{{this.description}}" id="change_description" type="text" class="validate">
+              <label class="active" for="change_description">Description</label>
+            </div>
+            <div class="input-field col s2">
+              <input value="{{this.vendor_vendorPartNumber}}" id="change_vendor" type="text" class="validate">
+              <label class="active" for="change_vendor">Vender - Vendor PartNumber</label>
+            </div>
+            <div class="input-field col s1">
+              <input value="{{this.price}}" id="change_price" type="text" class="validate">
+              <label class="active" for="change_price">Price</label>
+            </div>
+            <div class="input-field col s1">
+              <input value="{{this.minimumQuantity}}" id="change_minimum_quantity" type="text" class="validate">
+              <label class="active" for="change_minimum_quantity">Min Quantity</label>
+            </div>
+            <div class="input-field col s1">
+              <input value="{{this.onHand}}" id="change_on_hand" type="text" class="validate">
+              <label class="active" for="change_on_hand">On Hand</label>
+            </div>
+          </div>
+          <div style="text-align:center">
+            <button class="btn waves-effect waves-light grey" type="submit" name="action">Submit
+              <i class="material-icons right">send</i>
+            </button>&nbsp;
+            <button class="btn waves-effect waves-light grey" name="action" id="cancelModification">Cancel
+              <i class="material-icons right">not_interested</i>
+            </button>&nbsp;
+            <button class="btn waves-effect waves-light red" id="deleteSelectedRow" name="action">Delete
+              <i class="material-icons right">error_outline</i>
+            </button>
+          </div>
+        </form>
+      {{/each}}
+      <br>
+    </div>
+    <br>
+  {{/unless}}
+  <div class="row grey lighten-3 z-depth-1">
+    <div class="col s5">
+      <select id="sortSelectType">
+        <option value="" disabled selected>Sort By:</option>
+        <option value="category">Category</option>
+        <option value="partNumber_revision">PartNumber - Revision</option>
+        <option value="description">Description</option>
+        <option value="vendor_vendorPartNumber">Vendor - Vendor PartNumber</option>
+        <option value="price">Price</option>
+        <option value="minimumQuantity">Min Quantity</option>
+        <option value="onHand">On Hand</option>
+      </select>
+    </div>
+    <div class="col s5">
+      <select id="sortSelectModifier">
+        <option value="" disabled selected>Sort Option</option>
+        <option value="1">Ascending</option>
+        <option value="-1">Descending</option>
+      </select>
+    </div>
+    <div class="col s2">
+      <div style="height:10px"></div>
+      <button class="btn waves-effect waves-light grey" name="action" id="submitSearchQuery">Sort
+        <i class="material-icons right">send</i>
+      </button>
+    </div>
+  </div>
+  <table class="highlight">
+    <thead>
+      <tr>
+        <th data-field="category">Category</th>
+        <th data-field="partNumber_revision">PartNumber - Revision</th>
+        <th data-field="description">Description</th>
+        <th data-field="vendor_vendorPartNumber">Vendor - Vendor PartNumber</th>
+        <th data-field="price">Price</th>
+        <th data-field="minimumQuantity">Min Quantity</th>
+        <th data-field="onHand">On Hand</th>
+        <th data-field="orderPrice">Order Price</th>
+      </tr>
+    </thead>
+    <tbody>
+      {{#each getData}}
+        <tr id="{{this._id}}" class="tableRowClick">
+          <td>{{category}}</td>
+          <td>{{this.partNumber_revision}}</td>
+          <td>{{this.description}}</td>
+          <td>{{this.vendor_vendorPartNumber}}</td>
+          <td>${{this.price}}</td>
+          <td>{{this.minimumQuantity}}</td>
+          <td>{{this.onHand}}</td>
+          <td>${{getPrice this}}</td>
+        </tr>
+      {{/each}}
+    </tbody>
+  </table>
+</template>
